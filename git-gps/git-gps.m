@@ -144,6 +144,8 @@ BOOL updateGitGPSWithLocation(CLLocation *location) {
     if (![result writeToFile:gitGPSPath() atomically:YES encoding:NSUTF8StringEncoding error:nil]) {
         printf("%s\n", [[NSString stringWithFormat:@"Unable to update file at: %@", gitGPSPath()] UTF8String]);
         return NO;
+    } else {
+        printf("Added geolocation to commit.\n");
     }
     return YES;
 }
