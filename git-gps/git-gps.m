@@ -66,6 +66,8 @@ int createGitGPSHook() {
             } else {
                 printf("post-commit hook must be a sh script.\n");
             }
+        } else {
+            result = EXIT_SUCCESS;
         }
     } else {
         NSString *contents = [NSString stringWithFormat:@"%@\n%@", @"#!/bin/sh\n", commitHook()];
@@ -74,6 +76,10 @@ int createGitGPSHook() {
         } else {
             result = EXIT_SUCCESS;
         }
+    }
+    if (result == EXIT_SUCCESS) {
+        NSTask *chmod = [NSTask launchedTaskWithLaunchPath:@"/bin/chmod" arguments:[NSArray arrayWithObjects:@"+x", gitCommitHookPath(), nil]];
+        [chmod waitUntilExit];
     }
     return result;
 }
@@ -85,10 +91,10 @@ NSString * createGitGPSFile(NSString *gitPath) {
     if ([fm fileExistsAtPath:filePath isDirectory:&isDir]) {
         if (isDir) {
             usage([NSString stringWithFormat:@"\tDirectory found at: %@", filePath]);
+            return nil;
         } else {
-            usage([NSString stringWithFormat:@"\t.git-gps file already exists at: %@", filePath]);
+            return filePath;
         }
-        return nil;
     }
     if ([fm createFileAtPath:filePath contents:nil attributes:nil]) {
         return filePath;
@@ -103,13 +109,13 @@ int init() {
         usage(@"\tNo .git path found in parent directories.");
         return EXIT_FAILURE;
     }
+    result = createGitGPSHook();
+    if (result == EXIT_SUCCESS) {
+        printf("git-gps initialized at %s\n", [gitGPSPath() UTF8String]);
+    }
     NSString *gitGPSPath = createGitGPSFile(newGitPath);
     if (!gitGPSPath) {
         return EXIT_FAILURE;
-    }
-    result = createGitGPSHook();
-    if (result == EXIT_SUCCESS) {
-        printf("git-gps initialized at %s\n", [gitGPSPath UTF8String]);
     }
     return result;
 }
