@@ -2,10 +2,16 @@
 #import "GGCLDelegate.h"
 
 void usage(NSString *message) {
-    NSLog(@"Usage: git-gps [init|commit|update]");
+    printf("Usage: git-gps [init|commit|update]\n");
     if (message) {
-        NSLog(@"%@", message);
+        printf("%s\n", [message UTF8String]);
     }
+}
+
+NSString *commitHook() {
+    return @"# BEGIN git-gps HOOK\n"
+           @"git-gps commit\n"
+           @"# END git-gps HOOK\n";
 }
 
 NSString * gitPath() {
@@ -39,6 +45,39 @@ NSString *gitGPSPath () {
     return [[gitPath() stringByDeletingLastPathComponent] stringByAppendingPathComponent:@".git-gps"];
 }
 
+NSString *gitCommitHookPath() {
+    return [gitPath() stringByAppendingPathComponent:@"hooks/post-commit"];
+}
+
+int createGitGPSHook() {
+    int result = EXIT_FAILURE;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    if ([fm fileExistsAtPath:gitCommitHookPath()]) {
+        NSString *contents = [NSString stringWithContentsOfFile:gitCommitHookPath() encoding:NSUTF8StringEncoding error:nil];
+        if ([contents rangeOfString:@"BEGIN git-gps HOOK"].length == 0) {
+            NSRange shRange = [contents rangeOfString:@"#!/bin/sh"];
+            if (shRange.location == 0 && shRange.length > 0) {
+                NSString *newContents = [NSString stringWithFormat:@"%@\n%@", contents, commitHook()];
+                if ([newContents writeToFile:gitCommitHookPath() atomically:YES encoding:NSUTF8StringEncoding error:nil]) {
+                    result = EXIT_SUCCESS;
+                } else {
+                    printf("Unable to add post-commit hook.\n");
+                }
+            } else {
+                printf("post-commit hook must be a sh script.\n");
+            }
+        }
+    } else {
+        NSString *contents = [NSString stringWithFormat:@"%@\n%@", @"#!/bin/sh\n", commitHook()];
+        if (![contents writeToFile:gitCommitHookPath() atomically:YES encoding:NSUTF8StringEncoding error:nil]) {
+            printf("Unable to add post-commit hook.\n");
+        } else {
+            result = EXIT_SUCCESS;
+        }
+    }
+    return result;
+}
+
 NSString * createGitGPSFile(NSString *gitPath) {
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *filePath = gitGPSPath();
@@ -58,6 +97,7 @@ NSString * createGitGPSFile(NSString *gitPath) {
 }
 
 int init() {
+    int result = EXIT_FAILURE;
     NSString *newGitPath = gitPath();
     if (!newGitPath) {
         usage(@"\tNo .git path found in parent directories.");
@@ -67,8 +107,11 @@ int init() {
     if (!gitGPSPath) {
         return EXIT_FAILURE;
     }
-    NSLog(@"git-gps initialized at %@", gitGPSPath);
-    return EXIT_SUCCESS;
+    result = createGitGPSHook();
+    if (result == EXIT_SUCCESS) {
+        printf("git-gps initialized at %s\n", [gitGPSPath UTF8String]);
+    }
+    return result;
 }
 
 NSString *jsonForCLLocation(CLLocation *location) {
@@ -89,7 +132,7 @@ NSString *jsonForCLLocation(CLLocation *location) {
 BOOL updateGitGPSWithLocation(CLLocation *location) {
     NSString *result = jsonForCLLocation(location);
     if (![result writeToFile:gitGPSPath() atomically:YES encoding:NSUTF8StringEncoding error:nil]) {
-        NSLog(@"%@", [NSString stringWithFormat:@"Unable to update file at: %@", gitGPSPath()]);
+        printf("%s\n", [[NSString stringWithFormat:@"Unable to update file at: %@", gitGPSPath()] UTF8String]);
         return NO;
     }
     return YES;
@@ -135,7 +178,23 @@ int update() {
 int commit() {
     int result = update();
     if (result == EXIT_SUCCESS) {
-        
+        // Try to re-commit by `git add .git-gps; git commit --amend -C HEAD`
+        do { // once
+            NSTask *gitAdd = [NSTask launchedTaskWithLaunchPath:@"git" arguments:[NSArray arrayWithObjects:@"add", gitGPSPath(), nil]];
+            [gitAdd waitUntilExit];
+            if ([gitAdd terminationStatus] != EXIT_SUCCESS) {
+                result = [gitAdd terminationStatus];
+                break;
+            }
+            
+            NSTask *gitCommit = [NSTask launchedTaskWithLaunchPath:@"git" arguments:[NSArray arrayWithObjects:@"commit", @"--amend", @"-C", @"HEAD", nil]];
+            [gitCommit waitUntilExit];
+            if ([gitCommit terminationStatus] != EXIT_SUCCESS) {
+                result = [gitCommit terminationStatus];
+                break;
+            }
+            result = EXIT_SUCCESS;
+        } while (NO);
     }
     return result;
 }
