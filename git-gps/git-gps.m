@@ -2,7 +2,11 @@
 #import "GGCLDelegate.h"
 
 void usage(NSString *message) {
-    printf("Usage: git-gps [init|commit|update]\n");
+    printf("Usage: git-gps [init|commit|update|log]\n");
+    printf("\tinit\tInitializes git-gps in a git repository.\n");
+    printf("\tupdate\tUpdates the .git-gps file.\n");
+    printf("\tcommit\tUsed by the commit hook. Don't run!\n");
+    printf("\tlog\tUnimplemented.\n");
     if (message) {
         printf("%s\n", [message UTF8String]);
     }
@@ -214,6 +218,14 @@ int commit() {
     return result;
 }
 
+int log_all() {
+    int result = EXIT_SUCCESS;
+    
+    
+    
+    return result;
+}
+
 int main (int argc, const char * argv[]) {
     NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     int result = EXIT_FAILURE;
@@ -228,6 +240,9 @@ int main (int argc, const char * argv[]) {
                 break;
             } else if ([arg isEqualToString:@"commit"]) {
                 result = commit();
+                break;
+            } else if ([arg isEqualToString:@"log"]) {
+                result = log_all();
                 break;
             } else {
                 usage([NSString stringWithFormat:@"\tUnknown argument: %@", arg]);
