@@ -180,14 +180,14 @@ int commit() {
     if (result == EXIT_SUCCESS) {
         // Try to re-commit by `git add .git-gps; git commit --amend -C HEAD`
         do { // once
-            NSTask *gitAdd = [NSTask launchedTaskWithLaunchPath:@"git" arguments:[NSArray arrayWithObjects:@"add", gitGPSPath(), nil]];
+            NSTask *gitAdd = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/git" arguments:[NSArray arrayWithObjects:@"add", gitGPSPath(), nil]];
             [gitAdd waitUntilExit];
             if ([gitAdd terminationStatus] != EXIT_SUCCESS) {
                 result = [gitAdd terminationStatus];
                 break;
             }
             
-            NSTask *gitCommit = [NSTask launchedTaskWithLaunchPath:@"git" arguments:[NSArray arrayWithObjects:@"commit", @"--amend", @"-C", @"HEAD", nil]];
+            NSTask *gitCommit = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/git" arguments:[NSArray arrayWithObjects:@"commit", @"--amend", @"-C", @"HEAD", nil]];
             [gitCommit waitUntilExit];
             if ([gitCommit terminationStatus] != EXIT_SUCCESS) {
                 result = [gitCommit terminationStatus];
