@@ -182,6 +182,15 @@ int update() {
 }
 
 int commit() {
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *tombstonePath = [[gitPath() stringByDeletingLastPathComponent] stringByAppendingPathComponent:@".git-gps-tombstone"];
+    if ([fm fileExistsAtPath:tombstonePath]) {
+        [fm removeItemAtPath:tombstonePath error:nil];
+        return EXIT_SUCCESS;
+    } else {
+        [fm createFileAtPath:tombstonePath contents:nil attributes:nil];
+    }
+    
     int result = update();
     if (result == EXIT_SUCCESS) {
         // Try to re-commit by `git add .git-gps; git commit --amend -C HEAD`
