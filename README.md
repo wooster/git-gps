@@ -29,3 +29,10 @@ it to the commit.
 This is very alpha-level software, so please file issues, etc. 
 
 Patches welcome!
+
+## Similar Projects
+
+After writing this, I found out about [geocommit](https://github.com/peritus/geocommit), which does something very
+similar, except using git notes. The notes approach keeps the geo coordinates
+local until explicitly synced with the git remote. So, that would be more
+appropriate if you're concerned about privacy.
