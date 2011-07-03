@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4971B5DC13BFDC3A00774B70 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4971B5DB13BFDC3A00774B70 /* CoreLocation.framework */; };
+		4971B5F713BFDE9D00774B70 /* GGCLDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */; };
 		8DD76F9A0486AA7600D96B5E /* git-gps.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* git-gps.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* git-gps.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* git-gps.1 */; };
@@ -29,6 +31,9 @@
 		08FB7796FE84155DC02AAC07 /* git-gps.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "git-gps.m"; sourceTree = "<group>"; };
 		08FB779EFE84155DC02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		32A70AAB03705E1F00C91783 /* git-gps_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "git-gps_Prefix.pch"; sourceTree = "<group>"; };
+		4971B5DB13BFDC3A00774B70 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		4971B5F513BFDE9D00774B70 /* GGCLDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GGCLDelegate.h; path = source/GGCLDelegate.h; sourceTree = "<group>"; };
+		4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GGCLDelegate.m; path = source/GGCLDelegate.m; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* git-gps */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "git-gps"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* git-gps.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "git-gps.1"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -39,6 +44,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */,
+				4971B5DC13BFDC3A00774B70 /* CoreLocation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +67,8 @@
 			children = (
 				32A70AAB03705E1F00C91783 /* git-gps_Prefix.pch */,
 				08FB7796FE84155DC02AAC07 /* git-gps.m */,
+				4971B5F513BFDE9D00774B70 /* GGCLDelegate.h */,
+				4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -69,6 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				08FB779EFE84155DC02AAC07 /* Foundation.framework */,
+				4971B5DB13BFDC3A00774B70 /* CoreLocation.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";
@@ -140,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8DD76F9A0486AA7600D96B5E /* git-gps.m in Sources */,
+				4971B5F713BFDE9D00774B70 /* GGCLDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
