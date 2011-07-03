@@ -5,6 +5,12 @@ coordinates.
 
 Currently only works on OS X.
 
+## Motivation
+
+For awhile now, I've wanted GPS logging of my checkins to source control
+systems. Between the `CoreLocation` framework on OS X and git's post-commit
+hooks, this is now possible.
+
 ## Installation
 
 Build the git-gps project, and put the resulting git-gps binary in
