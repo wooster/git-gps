@@ -61,6 +61,16 @@ static GGGitTool *sharedGitTool = nil;
     NSString *path = [self runTaskAndGatherOutput:task];
     [task release], task = nil;
     path = [path stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSArray *paths = [NSArray arrayWithObjects:path, @"/usr/bin/git", @"/usr/local/bin/git", nil];
+    for (NSString *tmpPath in paths) {
+        if ([fm isExecutableFileAtPath:tmpPath]) {
+            path = tmpPath;
+            break;
+        }
+    }
+    
     return path;
 }
 
@@ -76,13 +86,26 @@ static GGGitTool *sharedGitTool = nil;
 }
 
 - (NSString *)runGitCommandAndGatherOutput:(NSArray *)arguments {
+    NSString *result = nil;
+    
     NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath:gitPath];
-    [task setArguments:arguments];
-    NSString *result = [self runTaskAndGatherOutput:task];
-    result = [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-    terminationStatus = [task terminationStatus];
-    [task release], task = nil;
+    
+    @try {
+        [task setLaunchPath:gitPath];
+        [task setArguments:arguments];
+        result = [self runTaskAndGatherOutput:task];
+        result = [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        terminationStatus = [task terminationStatus];
+    }
+    @catch (NSException * e) {
+        NSLog(@"Exception running task: %@", e);
+        NSLog(@"git path was: '%@'", gitPath);
+        NSLog(@"arguments were: %@", arguments);
+        @throw(e);
+    }
+    @finally {
+        [task release], task = nil;
+    }
     return result;
 }
 @end
