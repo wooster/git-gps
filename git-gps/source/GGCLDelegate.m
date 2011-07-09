@@ -3,7 +3,7 @@
 //  git-gps
 //
 //  Created by Andrew Wooster on 7/2/11.
-//  Copyright 2011 Apptentive. All rights reserved.
+//  Copyright 2011 Andrew Wooster. All rights reserved.
 //
 
 #import "GGCLDelegate.h"

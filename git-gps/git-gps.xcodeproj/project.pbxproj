@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4971B5DC13BFDC3A00774B70 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4971B5DB13BFDC3A00774B70 /* CoreLocation.framework */; };
 		4971B5F713BFDE9D00774B70 /* GGCLDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */; };
+		49D783BB13C902650003261C /* GGGitTool.m in Sources */ = {isa = PBXBuildFile; fileRef = 49D783BA13C902650003261C /* GGGitTool.m */; };
 		8DD76F9A0486AA7600D96B5E /* git-gps.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB7796FE84155DC02AAC07 /* git-gps.m */; settings = {ATTRIBUTES = (); }; };
 		8DD76F9C0486AA7600D96B5E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08FB779EFE84155DC02AAC07 /* Foundation.framework */; };
 		8DD76F9F0486AA7600D96B5E /* git-gps.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859EA3029092ED04C91782 /* git-gps.1 */; };
@@ -34,6 +35,8 @@
 		4971B5DB13BFDC3A00774B70 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		4971B5F513BFDE9D00774B70 /* GGCLDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GGCLDelegate.h; path = source/GGCLDelegate.h; sourceTree = "<group>"; };
 		4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GGCLDelegate.m; path = source/GGCLDelegate.m; sourceTree = "<group>"; };
+		49D783B913C902650003261C /* GGGitTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GGGitTool.h; path = source/GGGitTool.h; sourceTree = "<group>"; };
+		49D783BA13C902650003261C /* GGGitTool.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GGGitTool.m; path = source/GGGitTool.m; sourceTree = "<group>"; };
 		8DD76FA10486AA7600D96B5E /* git-gps */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "git-gps"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859EA3029092ED04C91782 /* git-gps.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = "git-gps.1"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,6 +72,8 @@
 				08FB7796FE84155DC02AAC07 /* git-gps.m */,
 				4971B5F513BFDE9D00774B70 /* GGCLDelegate.h */,
 				4971B5F613BFDE9D00774B70 /* GGCLDelegate.m */,
+				49D783B913C902650003261C /* GGGitTool.h */,
+				49D783BA13C902650003261C /* GGGitTool.m */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -124,6 +129,9 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				ORGANIZATIONNAME = "Andrew Wooster";
+			};
 			buildConfigurationList = 1DEB927808733DD40010E9CD /* Build configuration list for PBXProject "git-gps" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -150,6 +158,7 @@
 			files = (
 				8DD76F9A0486AA7600D96B5E /* git-gps.m in Sources */,
 				4971B5F713BFDE9D00774B70 /* GGCLDelegate.m in Sources */,
+				49D783BB13C902650003261C /* GGGitTool.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

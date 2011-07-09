@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import "GGCLDelegate.h"
+#import "GGGitTool.h"
 
 void usage(NSString *message) {
     printf("Usage: git-gps [init|commit|update|log]\n");
@@ -201,17 +202,17 @@ int commit() {
     if (result == EXIT_SUCCESS) {
         // Try to re-commit by `git add .git-gps; git commit --amend -C HEAD`
         do { // once
-            NSTask *gitAdd = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/git" arguments:[NSArray arrayWithObjects:@"add", gitGPSPath(), nil]];
-            [gitAdd waitUntilExit];
-            if ([gitAdd terminationStatus] != EXIT_SUCCESS) {
-                result = [gitAdd terminationStatus];
+            GGGitTool *git = [GGGitTool sharedGitTool];
+            
+            [git gitAdd:gitGPSPath()];
+            if ([git terminationStatus] != EXIT_SUCCESS) {
+                result = [git terminationStatus];
                 break;
             }
             
-            NSTask *gitCommit = [NSTask launchedTaskWithLaunchPath:@"/usr/bin/git" arguments:[NSArray arrayWithObjects:@"commit", @"--amend", @"-C", @"HEAD", nil]];
-            [gitCommit waitUntilExit];
-            if ([gitCommit terminationStatus] != EXIT_SUCCESS) {
-                result = [gitCommit terminationStatus];
+            [git gitCommand:[NSArray arrayWithObjects:@"commit", @"--amend", @"-C", @"HEAD", nil]];
+            if ([git terminationStatus] != EXIT_SUCCESS) {
+                result = [git terminationStatus];
                 break;
             }
             result = EXIT_SUCCESS;
