@@ -51,6 +51,10 @@ static GGGitTool *sharedGitTool = nil;
     return [self runGitCommandAndGatherOutput:[NSArray arrayWithObjects:@"add", path, nil]];
 }
 
+- (NSString *)gitHeadRevision {
+    return [self runGitCommandAndGatherOutput:[NSArray arrayWithObjects:@"rev-parse", @"HEAD", nil]];
+}
+
 @end
 
 @implementation GGGitTool (Private)

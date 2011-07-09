@@ -20,29 +20,10 @@ NSString *commitHook() {
 }
 
 NSString * gitPath() {
-    NSString *result = nil;
-    do { // once
-        NSFileManager *fm = [NSFileManager defaultManager];
-        NSString *cwd = [fm currentDirectoryPath];
-        if (!cwd) break;
-        
-        NSString *path = cwd;
-        while (YES) {
-            NSString *gitPath = [path stringByAppendingPathComponent:@".git"];
-            BOOL isDir = NO;
-            if ([fm fileExistsAtPath:gitPath isDirectory:&isDir] && isDir) {
-                result = gitPath;
-                break;
-            }
-            if ([path length] == 1) break;
-            
-            path = [path stringByDeletingLastPathComponent];
-            if (!path || [path length] == 0) {
-                break;
-            }
-        }
-        
-    } while (NO);
+    static NSString *result = nil;
+    if (result == nil) {
+        result = [[GGGitTool sharedGitTool] gitCommand:[NSArray arrayWithObjects:@"rev-parse", @"--show-toplevel", nil]];
+    }
     return result;
 }
 
@@ -151,13 +132,9 @@ BOOL updateGitGPSWithLocation(CLLocation *location) {
     return YES;
 }
 
-int update() {
-    int result = EXIT_FAILURE;
-    NSString *ourGitPath = gitPath();
-    if (!ourGitPath) {
-        usage(@"\tNo .git path found in parent directories.");
-        return result;
-    }
+
+int updateNote() {
+    int result = EXIT_SUCCESS;
     
     GGCLDelegate *cl = [[GGCLDelegate alloc] init];
     
@@ -180,12 +157,78 @@ int update() {
         }
     }
     
-    if (updateGitGPSWithLocation(cl.location)) {
-        result = EXIT_SUCCESS;
-    }
-    [cl release];
+    NSString *json = jsonForCLLocation(cl.location);
+    [cl release], cl = nil;
     
+    if ([json length]) {
+        NSString *tempFileTemplate = [NSTemporaryDirectory() stringByAppendingPathComponent:@"git-gps.XXXXXXX"];
+        const char *tempFileTemplateCString = [tempFileTemplate fileSystemRepresentation];
+        char *tempFileNameCString = (char *)malloc(strlen(tempFileTemplateCString) + 1);
+        if (!tempFileNameCString) {
+            return EXIT_FAILURE;
+        }
+        strcpy(tempFileNameCString, tempFileTemplateCString);
+        int fileDescriptor = mkstemp(tempFileNameCString);
+        if (fileDescriptor == -1) {
+            return EXIT_FAILURE;
+        }
+        NSString *tempFileName = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:tempFileNameCString length:strlen(tempFileNameCString)];
+        free(tempFileNameCString), tempFileNameCString = NULL;
+        
+        NSFileHandle *fh = [[NSFileHandle alloc] initWithFileDescriptor:fileDescriptor closeOnDealloc:NO];
+        [fh writeData:[json dataUsingEncoding:NSUTF8StringEncoding]];
+        [fh synchronizeFile];
+        
+        // Whew, now add a note with the right contents.
+        GGGitTool *git = [GGGitTool sharedGitTool];
+        [git gitCommand:[NSArray arrayWithObjects:@"notes", @"--ref=gps", @"add", @"-F", tempFileName, [git gitHeadRevision], nil]];
+        if ([git terminationStatus] != EXIT_SUCCESS) {
+            result = [git terminationStatus];
+        }
+        [fh closeFile];
+        [fh dealloc], fh = nil;
+    }
     return result;
+}
+
+int update() {
+    return updateNote();
+    /*
+     int result = EXIT_FAILURE;
+     NSString *ourGitPath = gitPath();
+     if (!ourGitPath) {
+     usage(@"\tNo .git path found in parent directories.");
+     return result;
+     }
+     
+     GGCLDelegate *cl = [[GGCLDelegate alloc] init];
+     
+     NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+     
+     while (YES) {
+     NSDate *now = [[NSDate alloc] init];
+     NSTimer *timer = [[NSTimer alloc] initWithFireDate:now interval:.01 target:cl selector:@selector(start:) userInfo:nil repeats:YES];
+     NSDate *terminate = [[NSDate alloc] initWithTimeIntervalSinceNow:1.0];
+     
+     [runLoop addTimer:timer forMode:NSDefaultRunLoopMode];
+     [runLoop runUntilDate:terminate];
+     
+     [timer invalidate];
+     [timer release];
+     [now release];
+     [terminate release];
+     if ([cl goodEnough]) {
+     break;
+     }
+     }
+     
+     if (updateGitGPSWithLocation(cl.location)) {
+     result = EXIT_SUCCESS;
+     }
+     [cl release];
+     
+     return result;
+     */
 }
 
 int commit() {
@@ -198,6 +241,7 @@ int commit() {
         [fm createFileAtPath:tombstonePath contents:nil attributes:nil];
     }
     
+    /* .git-gps method
     int result = update();
     if (result == EXIT_SUCCESS) {
         // Try to re-commit by `git add .git-gps; git commit --amend -C HEAD`
@@ -215,9 +259,14 @@ int commit() {
                 result = [git terminationStatus];
                 break;
             }
+     
             result = EXIT_SUCCESS;
         } while (NO);
     }
+    */
+    int result = updateNote();
+    
+    
     return result;
 }
 

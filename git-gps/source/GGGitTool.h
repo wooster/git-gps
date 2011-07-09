@@ -18,6 +18,7 @@
 
 - (NSString *)gitCommand:(NSArray *)arguments;
 - (NSString *)gitAdd:(NSString *)path;
+- (NSString *)gitHeadRevision;
 
 /*! The terminationStatus of the last command. */
 - (int)terminationStatus;
