@@ -64,7 +64,7 @@ static GGGitTool *sharedGitTool = nil;
     [task setArguments:[NSArray arrayWithObjects:@"git", nil]];
     NSString *path = [self runTaskAndGatherOutput:task];
     [task release], task = nil;
-    path = [path stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+    path = [path stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     NSFileManager *fm = [NSFileManager defaultManager];
     NSArray *paths = [NSArray arrayWithObjects:path, @"/usr/bin/git", @"/usr/local/bin/git", nil];
@@ -98,7 +98,7 @@ static GGGitTool *sharedGitTool = nil;
         [task setLaunchPath:gitPath];
         [task setArguments:arguments];
         result = [self runTaskAndGatherOutput:task];
-        result = [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        result = [result stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         terminationStatus = [task terminationStatus];
     }
     @catch (NSException * e) {
