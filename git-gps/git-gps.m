@@ -110,11 +110,21 @@ NSString *jsonForCLLocation(CLLocation *location) {
     NSString *result = @"";
     if (location) {
         NSMutableArray *parts = [NSMutableArray array];
-        [parts addObject:[NSString stringWithFormat:@"\"latitude\":%f", location.coordinate.latitude]];
-        [parts addObject:[NSString stringWithFormat:@"\"longitude\":%f", location.coordinate.longitude]];
-        [parts addObject:[NSString stringWithFormat:@"\"altitude\":%f", location.altitude]];
-        [parts addObject:[NSString stringWithFormat:@"\"horizontalAccuracy\":%f", location.horizontalAccuracy]];
-        [parts addObject:[NSString stringWithFormat:@"\"verticalAccuracy\":%f", location.verticalAccuracy]];
+        if (location.horizontalAccuracy >= 0.0) {
+            [parts addObject:[NSString stringWithFormat:@"\"latitude\":%f", location.coordinate.latitude]];
+            [parts addObject:[NSString stringWithFormat:@"\"longitude\":%f", location.coordinate.longitude]];
+            [parts addObject:[NSString stringWithFormat:@"\"horizontalAccuracy\":%f", location.horizontalAccuracy]];
+        }
+        if (location.verticalAccuracy >= 0.0) {
+            [parts addObject:[NSString stringWithFormat:@"\"altitude\":%f", location.altitude]];
+            [parts addObject:[NSString stringWithFormat:@"\"verticalAccuracy\":%f", location.verticalAccuracy]];
+        }
+        if (location.speed >= 0.0) {
+            [parts addObject:[NSString stringWithFormat:@"\"speed\":%f", location.speed]];
+        }
+        if (location.course >= 0.0) {
+            [parts addObject:[NSString stringWithFormat:@"\"course\":%f", location.course]];
+        }
         NSString *partsString = [parts componentsJoinedByString:@",\n    "];
         result = [NSString stringWithFormat:@"{\n    %@\n}\n", partsString];
     }
